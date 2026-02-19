@@ -3,7 +3,6 @@
 ## 1. Правило зависимостей
 Зависимости направлены только внутрь:
 
-presentation → application → domain  
 infrastructure → application / domain (через интерфейсы)
 
 ❌ Внутренние слои не знают о внешних.
