@@ -1,0 +1,78 @@
+services:
+  db:
+    container_name: ${POSTGRES_HOST:-db}
+    image: postgres:16.3-alpine
+    restart: ${POSTGRES_RESTART:-always}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "${EXTERNAL_DB_PORT:-5432}:${EXTERNAL_DB_PORT:-5432}"
+    command: postgres -p ${EXTERNAL_DB_PORT:-5432}
+    environment:
+      PGUSER: ${POSTGRES_USER:-admin}
+      POSTGRES_HOST: ${POSTGRES_HOST:-db}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      POSTGRES_DB: ${POSTGRES_DB:-admin}
+      POSTGRES_RESTART: ${POSTGRES_RESTART:-always}
+      EXTERNAL_DB_PORT: ${EXTERNAL_DB_PORT:-6969}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -p ${EXTERNAL_DB_PORT:-5432}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+  service:
+    container_name: ${CONTAINER_NAME:-service}
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "${APP_PORT:-8080}:${APP_PORT:-8080}"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      APP_PORT: ${APP_PORT:-8080}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:${EXTERNAL_DB_PORT:-5432}/${POSTGRES_DB:-admin}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-admin}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      SPRING_DATA_REDIS_HOST: ${REDIS_HOST:-redis}
+      SPRING_DATA_REDIS_PORT: ${REDIS_PORT:-6379}
+      SPRING_LOG_DIRECTORY: ${SPRING_LOG_DIRECTORY:-./log}
+      SPRING_LOGGING_LEVEL_ROOT: ${SPRING_LOGGING_LEVEL_ROOT:-info}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      COOKIES_LIFETIME: ${COOKIES_LIFETIME:-31536000}
+      MATCH_LIFETIME: ${MATCH_LIFETIME:-3}
+      BOT_TOKEN: ${BOT_TOKEN:-8467010614:AAEbMUycjFJ0NyisdtrFHl6nVX6qD0GxNdA}
+      BOT_NAME: ${BOT_NAME:-pickmeapp_bot}
+      BOT_ADMINS: ${BOT_ADMINS:-2057925059,5733250732,7034475535}
+      TELEGRAM_MAX_AGE_SECONDS: ${TELEGRAM_MAX_AGE_SECONDS:-3600}
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY:-MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgcFHIPm0WdCtUD1nijOjUJvArn+1c/RZI4zKW3UAoZf2hRANCAAQSj4yMklDjjD+EEKsFzreAOJajgpRdeDHnCg6ZbkASYlKILRI7JlpoS0/g9jJ4J+fzJH+xbWGt9X4wu/iLeso8}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEo+MjJJQ44w/hBCrBc63gDiWo4KUXXgx5woOmW5AEmJSiC0SOyZaaEtP4PYyeCfn8yR/sW1hrfV+MLv4i3rKPA==}
+      JWT_ACCESS_EXPIRATION: ${JWT_ACCESS_EXPIRATION:-900}
+      JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION:-864000}
+      PROD_DOMAIN: ${PROD_DOMAIN:-api.pickmeapp.ru}
+      REFRESH_TOKEN_AUTODELETE_RATE: ${REFRESH_TOKEN_AUTODELETE_RATE:-1}
+    volumes:
+      - client_data:/data
+  redis:
+    container_name: redis
+    image: redis:5
+    ports:
+      - "${REDIS_PORT:-6379}:${REDIS_PORT:-6379}"
+    restart: ${RESTART_POLICY:-always}
+    healthcheck:
+      test: ["CMD", "redis", "ping"]
+      interval: ${HEALTH_CHECK_INTERVAL:-30}s
+      timeout: ${HEALTH_CHECK_TIMEOUT:-10}s
+      retries: ${HEALTH_CHECK_RETRIES:-3}
+      start_period: ${HEALTH_CHECK_START_PERIOD:-40}s
+    volumes:
+      - redis_data:/data
+
+
+volumes:
+  pg_data:
+  client_data:
+  redis_data:

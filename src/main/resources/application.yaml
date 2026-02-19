@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:db}:${POSTGRES_HOST:5432}/${POSTGRES_DB:admin}
+    username: ${POSTGRES_USER:admin}
+    password: ${POSTGRES_PASSWORD:admin}
+    driver-class-name: org.postgresql.Driver
+  redis:
+    host: ${REDIS_HOST:redis}
+    port: ${REDIS_PORT:6379}
+    timeout: 5000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+logging:
+  level:
+    org.hibernate.SQL: ERROR
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+
+jwt:
+  claims-names:
+    token-pair-id-claim: "${TOKEN_PAIR_ID_CLAIM:tokenPairId}"
+    token-type-claim: "${TOKEN_TYPE_CLAIM:tokenType}"
+    access-token-type: "${ACCESS_TOKEN_TYPE:access}"
+    refresh-token-type: "${REFRESH_TOKEN_TYPE:refresh}"
+  keys:
+    private-key: ${JWT_PRIVATE_KEY:MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgcFHIPm0WdCtUD1nijOjUJvArn+1c/RZI4zKW3UAoZf2hRANCAAQSj4yMklDjjD+EEKsFzreAOJajgpRdeDHnCg6ZbkASYlKILRI7JlpoS0/g9jJ4J+fzJH+xbWGt9X4wu/iLeso8}
+    public-key: ${JWT_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEEo+MjJJQ44w/hBCrBc63gDiWo4KUXXgx5woOmW5AEmJSiC0SOyZaaEtP4PYyeCfn8yR/sW1hrfV+MLv4i3rKPA==}
+  expiration:
+    access-expiration: ${JWT_ACCESS_EXPIRATION:900}
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:864000}
+
+telegram:
+  token: ${TELEGRAM_TOKEN:8403606599:AAEwttjGyAW-M3wPS04fSf2B__8G6FaPZIg}
+  maxAuthAge: ${TELEGRAM_MAX_AUTH_AGE:3600}
+
+prod:
+  domain: ${PROD_DOMAIN:api.giftis.ru}
+
+cookies:
+  lifetime: ${COOKIE_LIFETIME:31536000}
+  access-name: ${COOKIE_ACCESS_NAME:access}
+  refresh-name: ${COOKIE_REFRESH_NAME:refresh}
