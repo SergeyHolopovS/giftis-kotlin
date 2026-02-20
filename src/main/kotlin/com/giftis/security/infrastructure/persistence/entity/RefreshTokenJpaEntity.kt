@@ -1,6 +1,6 @@
-package com.giftis.security.infrastructure.persistanse.entity
+package com.giftis.security.infrastructure.persistence.entity
 
-import com.giftis.user.infrastructure.persistanse.entity.UserJpaEntity
+import com.giftis.user.infrastructure.persistence.entity.UserJpaEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

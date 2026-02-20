@@ -11,4 +11,8 @@ interface RefreshTokenRepository {
 
     fun isRefreshTokenActiveByTokenPairId(tokenPairId: String): Boolean
 
+    fun isRefreshTokenActiveInDatabase(token: String): Boolean
+
+    fun deactivateToken(token: String)
+
 }

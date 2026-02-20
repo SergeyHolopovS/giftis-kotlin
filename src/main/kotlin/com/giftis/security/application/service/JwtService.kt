@@ -13,8 +13,12 @@ interface  JwtService {
 
     fun isTokenValid(token: String, user: User): Boolean
 
-    fun extractTokenPairId(token: String): String?
+    fun extractTokenPairId(token: String, ignoreExpiration: Boolean = false): String?
 
-    fun extractId(token: String): String
+    fun extractId(token: String, ignoreExpiration: Boolean = false): String
+
+    fun isRefreshTokenValid(token: String, user: User): Boolean
+
+    fun isAccessTokenExpired(token: String): Boolean
 
 }

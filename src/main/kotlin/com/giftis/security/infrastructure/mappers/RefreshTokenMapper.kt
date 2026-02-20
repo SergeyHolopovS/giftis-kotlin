@@ -1,7 +1,7 @@
-package com.giftis.security.infrastructure.persistanse.mapper
+package com.giftis.security.infrastructure.mappers
 
 import com.giftis.security.domain.model.RefreshToken
-import com.giftis.security.infrastructure.persistanse.entity.RefreshTokenJpaEntity
+import com.giftis.security.infrastructure.persistence.entity.RefreshTokenJpaEntity
 import org.mapstruct.Mapper
 
 @Mapper(componentModel = "spring")

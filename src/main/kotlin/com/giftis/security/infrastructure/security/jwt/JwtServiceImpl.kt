@@ -6,14 +6,14 @@ import com.giftis.security.application.service.JwtService
 import com.giftis.security.domain.model.TokenPair
 import com.giftis.user.domain.model.User
 import io.jsonwebtoken.Claims
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
 import java.security.PrivateKey
 import java.security.PublicKey
-import java.util.Date
-import java.util.UUID
+import java.util.*
 import java.util.function.Function
 
 @Component
@@ -57,20 +57,60 @@ class JwtServiceImpl(
         }
     }
 
-    override fun extractTokenPairId(token: String): String? {
+    override fun extractTokenPairId(token: String, ignoreExpiration: Boolean): String? {
         return try {
-            extractClaim(token) { claims ->
-                claims?.get(jwtConfig.tokenPairIdClaim) as? String
-            }
-        } catch (e: java.lang.Exception) {
+            extractClaim(
+                token=token,
+                ignoreExpiration=ignoreExpiration,
+                claimsResolver = { claims ->
+                    claims?.get(jwtConfig.tokenPairIdClaim) as? String
+                }
+            )
+        } catch (_: Exception) {
             null
         }
     }
 
-    override fun extractId(token: String): String = validateAndGetClaims(token).subject
+    override fun extractId(token: String, ignoreExpiration: Boolean): String
+        = validateAndGetClaims(token, ignoreExpiration).subject
 
-    private fun <T> extractClaim(token: String?, claimsResolver: Function<Claims?, T?>): T? {
-        val claims: Claims = validateAndGetClaims(token)
+    override fun isRefreshTokenValid(token: String, user: User): Boolean {
+        try {
+            val claims = validateAndGetClaims(token)
+
+            val tokenType = claims.get<String?>(jwtConfig.refreshTokenType, String::class.java)
+            if (jwtConfig.refreshTokenType != tokenType) {
+                return false
+            }
+
+            val tokenId = claims.subject
+            return !(user.id != tokenId || claims.expiration.before(Date()))
+        } catch (e: java.lang.Exception) {
+            logger.error("Refresh token validation failed: {}", e.message)
+            return false
+        }
+    }
+
+    override fun isAccessTokenExpired(token: String): Boolean {
+        try {
+            val claims: Claims = Jwts
+                .parserBuilder()
+                .setSigningKey(publicKey)
+                .build()
+                .parseClaimsJwt(token)
+                .body
+
+            return claims.expiration.before(Date())
+        } catch (_: ExpiredJwtException) {
+            return true
+        } catch (e: JwtException) {
+            logger.error("Invalid token during expiration check: {}", e.message)
+            return true
+        }
+    }
+
+    private fun <T> extractClaim(token: String?, claimsResolver: Function<Claims?, T?>, ignoreExpiration: Boolean = false): T? {
+        val claims: Claims = validateAndGetClaims(token, ignoreExpiration)
         return claimsResolver.apply(claims)
     }
 
@@ -105,7 +145,7 @@ class JwtServiceImpl(
             .compact()
     }
 
-    private fun validateAndGetClaims(token: String?): Claims {
+    private fun validateAndGetClaims(token: String?, ignoreExpiration: Boolean = false): Claims {
         try {
             return Jwts
                 .parserBuilder()
@@ -113,6 +153,9 @@ class JwtServiceImpl(
                 .build()
                 .parseClaimsJwt(token)
                 .body
+        } catch (e: ExpiredJwtException) {
+            if (ignoreExpiration) return e.claims
+            throw TokenUnauthorizedException("Токен устарел")
         } catch (e: JwtException) {
             logger.error("Failed to validate token: ${e.message}")
             throw TokenUnauthorizedException("Токен невалиден")

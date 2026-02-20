@@ -1,12 +1,12 @@
-package com.giftis.security.infrastructure.persistanse.repository
+package com.giftis.security.infrastructure.persistence.repository
 
 import com.giftis.configs.JwtConfig
 import com.giftis.security.domain.model.RefreshToken
 import com.giftis.security.domain.repository.RefreshTokenRepository
-import com.giftis.security.infrastructure.persistanse.entity.RefreshTokenJpaEntity
-import com.giftis.security.infrastructure.persistanse.mapper.RefreshTokenMapper
+import com.giftis.security.infrastructure.persistence.entity.RefreshTokenJpaEntity
+import com.giftis.security.infrastructure.mappers.RefreshTokenMapper
 import com.giftis.user.domain.model.User
-import com.giftis.user.infrastructure.persistanse.mapper.UserMapper
+import com.giftis.user.infrastructure.persistence.mapper.UserMapper
 import org.springframework.stereotype.Repository
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -43,8 +43,13 @@ class RefreshTokenRepositoryImpl(
         )
     }
 
-    override fun isRefreshTokenActiveByTokenPairId(tokenPairId: String): Boolean {
-        return repository.findByTokenPairIdAndIsActiveTrue(tokenPairId).isPresent
-    }
+    override fun isRefreshTokenActiveByTokenPairId(tokenPairId: String): Boolean
+        = repository.findByTokenPairIdAndIsActiveTrue(tokenPairId).isPresent
+
+    override fun isRefreshTokenActiveInDatabase(token: String): Boolean
+        = repository.findByTokenAndIsActiveTrue(token).isPresent
+
+    override fun deactivateToken(token: String)
+        = repository.deleteByToken(token)
 
 }

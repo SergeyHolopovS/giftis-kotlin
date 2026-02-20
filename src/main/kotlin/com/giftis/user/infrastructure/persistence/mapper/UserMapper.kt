@@ -1,7 +1,7 @@
-package com.giftis.user.infrastructure.persistanse.mapper
+package com.giftis.user.infrastructure.persistence.mapper
 
 import com.giftis.user.domain.model.User
-import com.giftis.user.infrastructure.persistanse.entity.UserJpaEntity
+import com.giftis.user.infrastructure.persistence.entity.UserJpaEntity
 import org.mapstruct.Mapper
 import org.mapstruct.ReportingPolicy
 

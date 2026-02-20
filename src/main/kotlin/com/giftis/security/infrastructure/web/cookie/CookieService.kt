@@ -1,6 +1,8 @@
 package com.giftis.security.infrastructure.web.cookie
 
 import com.giftis.configs.CookieConfig
+import com.giftis.exceptions.auth.TokenUnauthorizedException
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -43,6 +45,20 @@ class CookieService(
             .path("/")
             .build()
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
+    }
+
+    fun extractAccessTokenFromCookie(request: HttpServletRequest): String {
+        return request.cookies
+            ?.firstOrNull { it.name == cookieConfig.accessTokenName }
+            ?.value
+            ?: throw TokenUnauthorizedException("Токен авторизации не найден")
+    }
+
+    fun extractRefreshTokenFromCookie(request: HttpServletRequest): String {
+        return request.cookies
+            ?.firstOrNull { it.name == cookieConfig.refreshTokenName }
+            ?.value
+            ?: throw TokenUnauthorizedException("Токен обновления не найден")
     }
 
 }

@@ -1,6 +1,6 @@
-package com.giftis.user.infrastructure.persistanse.repositorty
+package com.giftis.user.infrastructure.persistence.repositorty
 
-import com.giftis.user.infrastructure.persistanse.entity.UserJpaEntity
+import com.giftis.user.infrastructure.persistence.entity.UserJpaEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.util.Optional

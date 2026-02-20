@@ -1,4 +1,4 @@
-package com.giftis.user.infrastructure.persistanse.entity
+package com.giftis.user.infrastructure.persistence.entity
 
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
