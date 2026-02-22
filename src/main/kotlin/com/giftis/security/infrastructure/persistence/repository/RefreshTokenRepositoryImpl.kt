@@ -6,7 +6,7 @@ import com.giftis.security.domain.repository.RefreshTokenRepository
 import com.giftis.security.infrastructure.persistence.entity.RefreshTokenJpaEntity
 import com.giftis.security.infrastructure.mappers.RefreshTokenMapper
 import com.giftis.user.domain.model.User
-import com.giftis.user.infrastructure.persistence.mapper.UserMapper
+import com.giftis.user.infrastructure.mappers.UserMapper
 import org.springframework.stereotype.Repository
 import java.time.Instant
 import java.time.temporal.ChronoUnit

@@ -1,7 +1,11 @@
 package com.giftis.user.infrastructure.persistence.entity
 
+import com.giftis.links.infrastructure.persistence.entity.LinkJpaEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 
 @Entity
 data class UserJpaEntity (
@@ -16,7 +20,16 @@ data class UserJpaEntity (
     // То, что хочет пользователь
     // ToDo: Добавить список хотелок
 
-    // Связи с другими пользователями
-    // Todo: Добавить список связей
+    // Созданные связи
+    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
+    val createdLinks: List<LinkJpaEntity> = emptyList(),
 
-)
+    // Принятые связи
+    @OneToMany(mappedBy = "respondent", fetch = FetchType.LAZY)
+    val respondedLinks: List<LinkJpaEntity> = emptyList(),
+
+) {
+    // Объединённый список всех связей
+    val links: List<LinkJpaEntity>
+        get() = createdLinks + respondedLinks
+}

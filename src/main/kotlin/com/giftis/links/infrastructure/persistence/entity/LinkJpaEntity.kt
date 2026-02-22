@@ -2,9 +2,11 @@ package com.giftis.links.infrastructure.persistence.entity
 
 import com.giftis.links.domain.model.LinkType
 import com.giftis.user.infrastructure.persistence.entity.UserJpaEntity
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -21,17 +23,18 @@ data class LinkJpaEntity(
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID? = null,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "creator_id", nullable = false)
     val creator: UserJpaEntity,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "respondent_id", nullable = false)
     val respondent: UserJpaEntity,
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     val type: LinkType,
 
 )

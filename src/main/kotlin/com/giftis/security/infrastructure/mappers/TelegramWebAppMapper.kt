@@ -2,9 +2,7 @@ package com.giftis.security.infrastructure.mappers
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.giftis.exceptions.auth.TokenUnauthorizedException
-import com.giftis.exceptions.user.UserNotFoundException
 import com.giftis.security.application.models.TelegramUser
-import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import tools.jackson.databind.ObjectMapper
@@ -37,7 +35,7 @@ class TelegramWebAppMapper(
 
         // Получаем User, чтобы запарсить если пройдём валидацию
         val userEncoded = URLDecoder.decode(
-            data["user"] ?: throw UserNotFoundException(),
+            data["user"] ?: throw TokenUnauthorizedException(),
             StandardCharsets.UTF_8
         )
 
@@ -55,13 +53,13 @@ class TelegramWebAppMapper(
         }
 
         // Шифруем секретный ключ
-        val secretKey = hmacSha256(
-            token.toByteArray(StandardCharsets.UTF_8),
-            webAppData.toByteArray(StandardCharsets.UTF_8)
-        )
+        val secretKey = generateSecretKey()
 
         // Шифруем dataCheckString по secretKey
-        val calculatedHash = hmacSha256(dataCheckString.toByteArray(StandardCharsets.UTF_8), secretKey)
+        val calculatedHash = hmacSha256(
+            dataCheckString.toByteArray(StandardCharsets.UTF_8),
+            secretKey
+        )
 
         // Сравниваем вычисленный хэш с receivedHash
         return if (MessageDigest.isEqual(calculatedHash, hexToBytes(receivedHash))) {
@@ -76,14 +74,18 @@ class TelegramWebAppMapper(
         }
     }
 
+    private fun generateSecretKey(): ByteArray {
+        val secretKeySpec = SecretKeySpec(webAppData.toByteArray(StandardCharsets.UTF_8), hmacAlgorithm)
+        val mac = Mac.getInstance(hmacAlgorithm)
+        mac.init(secretKeySpec)
+        return mac.doFinal(token.toByteArray(StandardCharsets.UTF_8))
+    }
+
     private fun hmacSha256(data: ByteArray, key: ByteArray): ByteArray {
-        return try {
-            val mac = Mac.getInstance(hmacAlgorithm)
-            mac.init(SecretKeySpec(key, hmacAlgorithm))
-            mac.doFinal(data)
-        } catch (e: Exception) {
-            throw RuntimeException("HMAC calculation failed", e)
-        }
+        val mac = Mac.getInstance(hmacAlgorithm)
+        val secretKeySpec = SecretKeySpec(key, hmacAlgorithm)
+        mac.init(secretKeySpec)
+        return mac.doFinal(data)
     }
 
     private fun parseQueryString(query: String): Map<String, String> {

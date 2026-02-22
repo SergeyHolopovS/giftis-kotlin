@@ -8,4 +8,6 @@ interface UserRepository {
 
     fun save(user: User): User
 
+    fun existsById(id: String): Boolean
+
 }

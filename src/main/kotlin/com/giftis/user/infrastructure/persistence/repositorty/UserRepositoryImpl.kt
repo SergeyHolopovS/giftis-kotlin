@@ -3,7 +3,7 @@ package com.giftis.user.infrastructure.persistence.repositorty
 import com.giftis.exceptions.user.UserNotFoundException
 import com.giftis.user.domain.model.User
 import com.giftis.user.domain.repository.UserRepository
-import com.giftis.user.infrastructure.persistence.mapper.UserMapper
+import com.giftis.user.infrastructure.mappers.UserMapper
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -18,6 +18,9 @@ class UserRepositoryImpl(
         return mapper.toModel(user.get())
     }
 
-    override fun save(user: User): User = mapper.toModel(repository.save(mapper.toEntity(user)))
+    override fun save(user: User): User = mapper.toModel(repository.saveAndFlush(mapper.toEntity(user)))
+
+    override fun existsById(id: String): Boolean
+        = repository.existsById(id)
 
 }

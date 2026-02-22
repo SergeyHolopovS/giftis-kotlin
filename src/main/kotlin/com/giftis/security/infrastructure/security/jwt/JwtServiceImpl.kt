@@ -151,7 +151,7 @@ class JwtServiceImpl(
                 .parserBuilder()
                 .setSigningKey(publicKey)
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .body
         } catch (e: ExpiredJwtException) {
             if (ignoreExpiration) return e.claims
