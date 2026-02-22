@@ -10,7 +10,7 @@ class UpdateTypeUseCase(
 
     fun execute(command: UpdateTypeCommand) {
         // Проверяем право владения
-        linkRepository.ownByUserId(command.id, command.userId)
+        linkRepository.checkOwnership(command.id, command.userId)
 
         // Изменяем тип
         linkRepository.updateType(command.id, command.newType)

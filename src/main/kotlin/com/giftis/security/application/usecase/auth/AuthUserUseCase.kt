@@ -3,7 +3,6 @@ package com.giftis.security.application.usecase.auth
 import com.giftis.exceptions.auth.UsernameNotFound
 import com.giftis.security.application.service.JwtService
 import com.giftis.security.domain.repository.RefreshTokenRepository
-import com.giftis.user.domain.model.User
 import com.giftis.user.domain.repository.UserRepository
 import org.springframework.stereotype.Component
 

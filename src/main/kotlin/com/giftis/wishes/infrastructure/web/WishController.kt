@@ -9,7 +9,6 @@ import com.giftis.wishes.application.usecase.getAll.GetAllWishesUseCase
 import com.giftis.wishes.domain.modal.Wish
 import com.giftis.wishes.infrastructure.mappers.WishMapper
 import com.giftis.wishes.infrastructure.web.requests.CreateWishRequest
-import com.giftis.wishes.infrastructure.web.requests.DeleteWishRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/wish")
@@ -59,15 +59,15 @@ class WishController(
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     fun deleteWish(
         @AuthenticationPrincipal userId: String,
-        @RequestBody request: DeleteWishRequest
+        @PathVariable id: UUID
     ): ResponseEntity<Unit> {
         deleteWishUseCase.execute(
             DeleteWishCommand(
                 userId = userId,
-                id = request.id
+                id = id
             )
         )
         return ResponseEntity.ok().build()

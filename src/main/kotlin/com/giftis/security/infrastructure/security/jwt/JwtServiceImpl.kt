@@ -78,7 +78,7 @@ class JwtServiceImpl(
         try {
             val claims = validateAndGetClaims(token)
 
-            val tokenType = claims.get<String?>(jwtConfig.refreshTokenType, String::class.java)
+            val tokenType = claims.get(jwtConfig.refreshTokenType, String::class.java)
             if (jwtConfig.refreshTokenType != tokenType) {
                 return false
             }
@@ -141,7 +141,7 @@ class JwtServiceImpl(
             .addClaims(extraClaims)
             .setSubject(user.id)
             .setIssuedAt(Date(System.currentTimeMillis()))
-            .setExpiration(Date(System.currentTimeMillis() + expiration * 1000)) // переводится в секундах, т.е. указывать значения в секундах
+            .setExpiration(Date(System.currentTimeMillis() + expiration * 1000)) // Переводится в секунды, т.е. указывать значения в секундах
             .compact()
     }
 

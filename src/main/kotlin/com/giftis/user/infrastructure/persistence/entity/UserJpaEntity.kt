@@ -1,7 +1,6 @@
 package com.giftis.user.infrastructure.persistence.entity
 
 import com.giftis.links.infrastructure.persistence.entity.LinkJpaEntity
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.Id

@@ -17,7 +17,7 @@ class WishrepositoryImpl(
 ) : WishRepository {
 
     override fun findAllByUserId(userId: String): List<Wish>
-        = repository.findAllByUserId(userId).map { mapper.toModel(it) }
+        = repository.findAllByUser_Id(userId).map { mapper.toModel(it) }
 
     override fun create(
         creator: User,
@@ -40,9 +40,9 @@ class WishrepositoryImpl(
         = repository.deleteById(id)
 
     override fun existsByUserIdAndLink(userId: String, link: String): Boolean
-        = repository.existsByUserIdAndLink(userId, link)
+        = repository.existsByUser_IdAndLink(userId, link)
 
     override fun checkOwnership(userId: String, id: UUID): Boolean
-        = repository.existsByUserIdAndId(userId, id)
+        = repository.checkOwnership(userId, id)
 
 }

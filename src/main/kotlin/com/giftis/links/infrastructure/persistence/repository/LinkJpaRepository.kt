@@ -32,7 +32,7 @@ interface LinkJpaRepository : JpaRepository<LinkJpaEntity, UUID> {
         SELECT CASE WHEN COUNT(l) > 0 THEN true ELSE false END
         FROM LinkJpaEntity l
         WHERE l.id = :id AND 
-        (l.creator.id = :userId OR l.respondent.id = :userId)
+        (l.creator.id = :user OR l.respondent.id = :user)
     """)
     fun ownByUserId(@Param("id") id: UUID, @Param("user") user: String): Boolean
 

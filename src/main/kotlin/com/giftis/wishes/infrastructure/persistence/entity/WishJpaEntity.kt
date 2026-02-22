@@ -2,7 +2,6 @@ package com.giftis.wishes.infrastructure.persistence.entity
 
 import com.giftis.user.infrastructure.persistence.entity.UserJpaEntity
 import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -17,7 +16,7 @@ data class WishJpaEntity(
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     val user: UserJpaEntity,
 

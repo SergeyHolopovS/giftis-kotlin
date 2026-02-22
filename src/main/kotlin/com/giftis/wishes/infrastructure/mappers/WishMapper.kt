@@ -11,8 +11,6 @@ interface WishMapper {
 
     fun toModel(entity: WishJpaEntity): Wish
 
-    fun toEntity(model: Wish): WishJpaEntity
-
     fun toDto(model: Wish): WishDto
 
 }

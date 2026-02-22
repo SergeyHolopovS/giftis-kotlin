@@ -2,7 +2,6 @@ package com.giftis.security.application.usecase.refresh
 
 import com.giftis.exceptions.auth.TokenUnauthorizedException
 import com.giftis.security.application.service.JwtService
-import com.giftis.security.application.usecase.auth.AuthResult
 import com.giftis.security.domain.repository.RefreshTokenRepository
 import com.giftis.user.domain.model.User
 import com.giftis.user.domain.repository.UserRepository

@@ -2,16 +2,28 @@ package com.giftis.wishes.infrastructure.persistence.repository
 
 import com.giftis.wishes.infrastructure.persistence.entity.WishJpaEntity
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import java.util.UUID
 
 interface WishJpaRepository : JpaRepository<WishJpaEntity, UUID> {
 
-    fun findAllByUserId(userId: String): List<WishJpaEntity>
+    fun findAllByUser_Id(userId: String): List<WishJpaEntity>
 
     override fun deleteById(id: UUID)
 
-    fun existsByUserIdAndLink(userId: String, link: String): Boolean
+    fun existsByUser_IdAndLink(userId: String, link: String): Boolean
 
-    fun existsByUserIdAndId(userId: String, id: UUID): Boolean
+    @Query(
+        """
+            SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END
+            FROM WishJpaEntity e 
+            WHERE e.user.id=:userId AND e.id = :id
+        """
+    )
+    fun checkOwnership(
+        @Param("userId") userId: String,
+        @Param("id") id: UUID
+    ): Boolean
 
 }

@@ -11,7 +11,8 @@ class DeleteWishUseCase(
 
     fun execute(command: DeleteWishCommand) {
         // Проверяем владение
-        if (repository.checkOwnership(
+        if (
+            !repository.checkOwnership(
                 command.userId,
                 command.id
             )

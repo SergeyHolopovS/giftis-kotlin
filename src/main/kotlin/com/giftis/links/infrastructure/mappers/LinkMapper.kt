@@ -9,8 +9,6 @@ import org.mapstruct.ReportingPolicy
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 interface LinkMapper {
 
-    fun toJpaEntity(link: Link): LinkJpaEntity
-
     fun toModel(linkJpaEntity: LinkJpaEntity): Link
 
     fun toDto(model: Link): LinkDto

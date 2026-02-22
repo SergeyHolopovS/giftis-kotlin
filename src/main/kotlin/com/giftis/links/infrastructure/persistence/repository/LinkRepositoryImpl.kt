@@ -51,7 +51,7 @@ class LinkRepositoryImpl(
         user2: User
     ): Boolean = repository.existsByUsers(user1.id, user2.id)
 
-    override fun ownByUserId(id: UUID, userId: String): Boolean
+    override fun checkOwnership(id: UUID, userId: String): Boolean
         = repository.ownByUserId(id, userId)
 
     @Transactional

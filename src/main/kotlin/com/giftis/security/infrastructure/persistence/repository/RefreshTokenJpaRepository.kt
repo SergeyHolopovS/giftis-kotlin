@@ -9,8 +9,6 @@ import java.util.UUID
 @Repository
 interface RefreshTokenJpaRepository : JpaRepository<RefreshTokenJpaEntity, UUID> {
 
-    fun findByToken(token: String): Optional<RefreshTokenJpaEntity>
-
     fun existsByToken(token: String): Boolean
 
     fun findByTokenPairIdAndIsActiveTrue(tokenPairId: String): Optional<RefreshTokenJpaEntity>

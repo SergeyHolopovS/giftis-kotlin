@@ -21,7 +21,7 @@ interface LinkRepository {
 
     fun existsByUsers(user1: User, user2: User): Boolean
 
-    fun ownByUserId(id: UUID, userId: String): Boolean
+    fun checkOwnership(id: UUID, userId: String): Boolean
 
     fun updateType(id: UUID, type: LinkType)
 
