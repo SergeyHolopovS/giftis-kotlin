@@ -11,7 +11,7 @@ RUN ./gradlew dependencies --no-daemon || true
 
 COPY src src
 
-RUN ./gradlew build -x test --no-daemon
+RUN ./gradlew build   --no-daemon
 
 FROM eclipse-temurin:17-jre-alpine
 

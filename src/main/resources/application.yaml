@@ -44,7 +44,7 @@ telegram:
   maxAuthAge: ${TELEGRAM_MAX_AUTH_AGE:3600}
 
 prod:
-  domain: ${PROD_DOMAIN:api.giftis.ru}
+  domain: ${PROD_DOMAIN:api.giftisapp.ru}
 
 cookies:
   lifetime: ${COOKIE_LIFETIME:31536000}

@@ -6,7 +6,6 @@ import java.util.UUID
 
 data class LinkDto(
     val id: UUID,
-    val creator: UserDto,
-    val respondent: UserDto,
+    val user: UserDto,
     val type: LinkType,
 )

@@ -46,6 +46,19 @@ class WishController(
             .map { mapper.toDto(it) }
     )
 
+    @GetMapping
+    fun getMyWishes(
+        @AuthenticationPrincipal userId: String,
+    ) = ResponseEntity.ok(
+        getAllWishesUseCase.execute(
+            GetAllWishesCommand(
+                userId = userId,
+            )
+        )
+            .list
+            .map { mapper.toDto(it) }
+    )
+
     @PostMapping
     fun createWish(
         @AuthenticationPrincipal userId: String,

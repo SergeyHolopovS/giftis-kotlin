@@ -12,6 +12,7 @@ import com.giftis.links.infrastructure.mappers.LinkMapper
 import com.giftis.links.infrastructure.web.requests.CreateLinkRequest
 import com.giftis.links.infrastructure.web.requests.UpdateLinkRequest
 import com.giftis.links.infrastructure.web.response.LinkDto
+import com.giftis.user.infrastructure.mappers.UserMapper
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -35,7 +36,8 @@ class LinkController(
     private val updateTypeUseCase: UpdateTypeUseCase,
     private val getAllLinksUseCase: GetAllLinksUseCase,
     private val deleteLinkUseCase: DeleteLinkUseCase,
-    private val mapper: LinkMapper
+    private val mapper: LinkMapper,
+    private val userMapper: UserMapper,
 ) {
 
     @GetMapping
@@ -50,7 +52,7 @@ class LinkController(
         return ResponseEntity.ok(
             result
                 .list
-                .map { mapper.toDto(it) }
+                .map { mapper.toDto(it, userId, userMapper) }
         )
     }
 
