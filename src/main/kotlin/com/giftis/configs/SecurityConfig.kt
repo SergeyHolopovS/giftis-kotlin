@@ -10,12 +10,14 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.AccessDeniedHandler
+import org.springframework.web.cors.CorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
     private val accessDeniedHandler: AccessDeniedHandler,
     private val authenticationEntryPoint: AuthenticationEntryPoint,
+    private val corsConfigurationSource: CorsConfigurationSource
 ) {
 
     @Bean
@@ -25,8 +27,9 @@ class SecurityConfig(
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain = http
-        .csrf { csrf -> csrf.disable() }
-        .cors { cors -> cors.disable() }
+        .cors {
+            cors -> cors.configurationSource(corsConfigurationSource)
+        }
         .authorizeHttpRequests { auth -> auth
             .anyRequest().permitAll()
         }

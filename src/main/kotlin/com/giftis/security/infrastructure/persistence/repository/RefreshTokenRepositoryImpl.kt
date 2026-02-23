@@ -52,4 +52,9 @@ class RefreshTokenRepositoryImpl(
     override fun deactivateToken(token: String)
         = repository.deleteByToken(token)
 
+    override fun deleteExpiredTokens()
+        = repository.deleteByExpiresAtBefore(
+            Instant.now()
+        )
+
 }

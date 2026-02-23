@@ -2,6 +2,7 @@ package com.giftis.security.domain.repository
 
 import com.giftis.security.domain.model.RefreshToken
 import com.giftis.user.domain.model.User
+import java.time.Instant
 
 interface RefreshTokenRepository {
 
@@ -14,5 +15,7 @@ interface RefreshTokenRepository {
     fun isRefreshTokenActiveInDatabase(token: String): Boolean
 
     fun deactivateToken(token: String)
+
+    fun deleteExpiredTokens()
 
 }
