@@ -36,6 +36,8 @@ jwt:
   expiration:
     access-expiration: ${JWT_ACCESS_EXPIRATION:900}
     refresh-expiration: ${JWT_REFRESH_EXPIRATION:864000}
+  schedule:
+    refresh-autodelete-rate: ${REFRESH_TOKEN_AUTODELETE_RATE:1}
 
 telegram:
   token: ${TELEGRAM_TOKEN:8403606599:AAEwttjGyAW-M3wPS04fSf2B__8G6FaPZIg}

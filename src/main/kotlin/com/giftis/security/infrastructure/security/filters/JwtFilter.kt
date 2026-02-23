@@ -32,7 +32,7 @@ class JwtFilter(
         try {
             // Если куков нет или контекст уже установлен -> идём дальше по фильтрам
             if (
-                request.cookies == null &&
+                request.cookies == null ||
                 SecurityContextHolder.getContext().authentication != null
             ) throw RuntimeException()
 

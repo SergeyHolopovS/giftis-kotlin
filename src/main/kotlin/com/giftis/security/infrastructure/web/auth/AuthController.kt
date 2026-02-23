@@ -11,13 +11,16 @@ import com.giftis.security.infrastructure.web.auth.requests.AuthRequest
 import com.giftis.security.infrastructure.web.cookie.CookieService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+@Validated
 @RestController
 @RequestMapping("/v1/auth")
 class AuthController(
@@ -30,7 +33,7 @@ class AuthController(
 
     @PostMapping
     fun authorize(
-        @RequestBody requestBody: AuthRequest,
+        @Valid @RequestBody requestBody: AuthRequest,
         servletResponse: HttpServletResponse,
     ): ResponseEntity<Unit> {
         val user: TelegramUser = telegramMapper.parseInitData(requestBody.initData)
@@ -57,14 +60,25 @@ class AuthController(
         servletResponse: HttpServletResponse,
         servletRequest: HttpServletRequest,
         @AuthenticationPrincipal userId: String,
-    ) {
-        refreshUseCase.execute(
+    ): ResponseEntity<Unit> {
+        val result = refreshUseCase.execute(
             RefreshCommand(
                 accessToken = cookieService.extractAccessTokenFromCookie(servletRequest),
                 refreshToken = cookieService.extractRefreshTokenFromCookie(servletRequest),
                 userId = userId
             )
         )
+        cookieService.addCookie(
+            cookieConfig.accessTokenName,
+            result.accessToken,
+            servletResponse
+        )
+        cookieService.addCookie(
+            cookieConfig.refreshTokenName,
+            result.refreshToken,
+            servletResponse
+        )
+        return ResponseEntity.ok().build()
     }
 
     @PostMapping("/logout")

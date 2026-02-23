@@ -14,7 +14,7 @@ class AutoDeleteTokens(
     private val logger = KotlinLogging.logger {}
 
     @Scheduled(
-        fixedRateString = $$"${refresh.autoDeleteRate}",
+        fixedRateString = $$"${jwt.schedule.refresh-autodelete-rate}",
         timeUnit = TimeUnit.DAYS
     )
     fun run() {

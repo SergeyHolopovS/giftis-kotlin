@@ -27,11 +27,9 @@ class CorsConfig(
     @Profile("dev")
     fun corsConfigurationSourceDev(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.setAllowedOriginPatterns(
-            listOf(
-                "http://localhost:*",
-                "http://127.0.0.1:*"
-            )
+        configuration.allowedOriginPatterns = listOf(
+            "http://localhost:*",
+            "http://127.0.0.1:*"
         )
         return configureScource(configuration)
     }

@@ -9,9 +9,11 @@ import com.giftis.wishes.application.usecase.getAll.GetAllWishesUseCase
 import com.giftis.wishes.domain.modal.Wish
 import com.giftis.wishes.infrastructure.mappers.WishMapper
 import com.giftis.wishes.infrastructure.web.requests.CreateWishRequest
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
+@Validated
 @RestController
 @RequestMapping("/v1/wish")
 class WishController(
@@ -46,7 +49,7 @@ class WishController(
     @PostMapping
     fun createWish(
         @AuthenticationPrincipal userId: String,
-        @RequestBody request: CreateWishRequest
+        @Valid @RequestBody request: CreateWishRequest
     ): ResponseEntity<Wish> {
         createWishUseCase.execute(
             CreateWishCommand(

@@ -6,6 +6,7 @@ import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -15,7 +16,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException
 class GlobalExceptionHandler {
 
     private val logger = KotlinLogging.logger {}
-
     @ExceptionHandler(BasicException::class)
     fun handleBusinessException(e: BasicException): ResponseEntity<ErrorDto> {
         return ResponseEntity
@@ -27,6 +27,19 @@ class GlobalExceptionHandler {
                 )
             )
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidationException(): ResponseEntity<ErrorDto> {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(
+                ErrorDto(
+                    "Запрос невалиден",
+                    HttpStatus.BAD_REQUEST,
+                )
+            )
+    }
+
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

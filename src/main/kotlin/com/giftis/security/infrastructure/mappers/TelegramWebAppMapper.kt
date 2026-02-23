@@ -20,7 +20,9 @@ class TelegramWebAppMapper(
     @Value($$"${telegram.token}")
     private val token: String,
     @Value($$"${telegram.maxAuthAge}")
-    private val maxAuthAge: Long
+    private val maxAuthAge: Long,
+    @Value($$"${spring.profiles.active}")
+    private val profile: String
 ) {
 
     private val hmacAlgorithm = "HmacSHA256"
@@ -28,6 +30,17 @@ class TelegramWebAppMapper(
 
     @OptIn(ExperimentalTime::class)
     fun parseInitData(initData: String): TelegramUser {
+        if (profile == "dev") return TelegramUser(
+            id = initData.toLong(),
+            firstName = "User $initData",
+            lastName = "User $initData lastName",
+            isPremium = false,
+            photoUrl = "",
+            username = "",
+            languageCode = "ru",
+            allowsWriteToPm = "true"
+        )
+
         val data = parseQueryString(initData).toMutableMap()
 
         // Удаляем hash из мапа, записывая его в переменную
