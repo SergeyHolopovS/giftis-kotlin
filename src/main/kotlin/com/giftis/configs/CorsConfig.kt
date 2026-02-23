@@ -19,7 +19,7 @@ class CorsConfig(
     @Profile("prod")
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("https://$domain")
+        configuration.allowedOrigins = listOf("https://${domain.replace("api.", "")}")
         return configureScource(configuration)
     }
 
