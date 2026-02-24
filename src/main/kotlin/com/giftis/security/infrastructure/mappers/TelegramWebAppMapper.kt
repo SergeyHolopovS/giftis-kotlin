@@ -5,18 +5,17 @@ import com.giftis.exceptions.auth.TokenUnauthorizedException
 import com.giftis.security.application.models.TelegramUser
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import tools.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.time.Instant
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
-import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @Component
 class TelegramWebAppMapper(
-    private val mapper: ObjectMapper,
     @Value($$"${telegram.token}")
     private val token: String,
     @Value($$"${telegram.maxAuthAge}")
@@ -27,6 +26,8 @@ class TelegramWebAppMapper(
 
     private val hmacAlgorithm = "HmacSHA256"
     private val webAppData = "WebAppData"
+
+    private val mapper = ObjectMapper()
 
     @OptIn(ExperimentalTime::class)
     fun parseInitData(initData: String): TelegramUser {
@@ -57,16 +58,19 @@ class TelegramWebAppMapper(
 
         // Проверка на слишком старую дату авторизации
         val authDate = authDateStr.toLong()
-        val now = Clock.System.now().epochSeconds
+        val now = Instant.now().epochSecond
         if (now - authDate > maxAuthAge) throw TokenUnauthorizedException()
 
         // Собираем Map в строку, соединяя все элементы \n, а key и value через =
-        val dataCheckString = data.toSortedMap().entries.joinToString("\n") { (key, value) ->
+        val dataCheckString = data.entries.sortedBy { it.key }.joinToString("\n") { (key, value) ->
             "$key=${URLDecoder.decode(value, StandardCharsets.UTF_8)}"
         }
 
         // Шифруем секретный ключ
-        val secretKey = generateSecretKey()
+        val secretKey = hmacSha256(
+            token.toByteArray(StandardCharsets.UTF_8),
+            webAppData.toByteArray(StandardCharsets.UTF_8)
+        )
 
         // Шифруем dataCheckString по secretKey
         val calculatedHash = hmacSha256(
@@ -87,13 +91,6 @@ class TelegramWebAppMapper(
         }
     }
 
-    private fun generateSecretKey(): ByteArray {
-        val secretKeySpec = SecretKeySpec(webAppData.toByteArray(StandardCharsets.UTF_8), hmacAlgorithm)
-        val mac = Mac.getInstance(hmacAlgorithm)
-        mac.init(secretKeySpec)
-        return mac.doFinal(token.toByteArray(StandardCharsets.UTF_8))
-    }
-
     private fun hmacSha256(data: ByteArray, key: ByteArray): ByteArray {
         val mac = Mac.getInstance(hmacAlgorithm)
         val secretKeySpec = SecretKeySpec(key, hmacAlgorithm)
@@ -102,14 +99,16 @@ class TelegramWebAppMapper(
     }
 
     private fun parseQueryString(query: String): Map<String, String> {
-        return query.split("&").mapNotNull { pair ->
+        val result = HashMap<String, String>()
+        for (pair in query.split("&")) {
             val idx = pair.indexOf("=")
             if (idx > 0) {
                 val key = pair.substring(0, idx)
                 val value = pair.substring(idx + 1)
-                key to value
-            } else null
-        }.toMap()
+                result[key] = value
+            }
+        }
+        return result
     }
 
     private fun hexToBytes(hex: String): ByteArray {
