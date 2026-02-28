@@ -25,6 +25,7 @@ services:
     container_name: ${CONTAINER_NAME:-service}
     build:
       context: ./
+      network: host # Если не кача.тся зависимости при билде - закомментируйте эту строку
       dockerfile: Dockerfile
     ports:
       - "${APP_PORT:-8080}:${APP_PORT:-8080}"
